@@ -1,0 +1,39 @@
+---
+layout: layouts/base.njk
+pagination:
+  data: collections.tagList
+  size: 1
+  alias: tag
+permalink: "tags/{{ tag | slug }}/index.html"
+navKey: blog
+---
+<div class="container breadcrumb">
+  <a href="/">快连下载</a> / <a href="/blog/">教程</a> / <span>{{ tag }}</span>
+</div>
+
+<section class="hero" style="padding:48px 0 32px;">
+  <div class="container">
+    <h1>{{ tag }} · 快连下载</h1>
+  </div>
+</section>
+
+<section class="section" style="padding-top:0;">
+  <div class="container">
+    <div class="card-grid">
+      {% for post in collections.posts %}
+      {% if tag in post.data.tags %}
+      <article class="card">
+        <a href="{{ post.url }}" class="card-thumb">
+          <img src="{{ (post.data.title + ' 快连下载') | bingImg }}" alt="{{ post.data.title }}" loading="lazy" width="400" height="225">
+        </a>
+        <div class="card-body">
+          <h3><a href="{{ post.url }}">{{ post.data.title }}</a></h3>
+          <p>{{ post.data.description }}</p>
+        </div>
+      </article>
+      {% endif %}
+      {% endfor %}
+    </div>
+    <p style="margin-top:24px;"><a href="/blog/">← 快连下载教程</a></p>
+  </div>
+</section>

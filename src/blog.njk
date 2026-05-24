@@ -1,0 +1,72 @@
+---
+layout: layouts/base.njk
+permalink: blog/index.html
+navKey: blog
+pageTitle: 快连下载教程大全
+pageDescription: 快连下载 Windows、macOS、Android、iOS 安装教程，以及连接、更新、账号与网络环境相关文章。
+---
+<div class="container breadcrumb">
+  <a href="/">快连下载</a> / <span>教程</span>
+</div>
+
+<section class="hero" style="padding:48px 0 32px;">
+  <div class="container">
+    <h1>快连下载教程</h1>
+  </div>
+</section>
+
+<section class="section" style="padding-top:0;">
+  <div class="container">
+  {% for cat in site.categories %}
+    <header class="section-head" id="cat-{{ cat.slug }}">
+      <h2>{{ cat.name }}</h2>
+    </header>
+    <div class="card-grid" style="margin-bottom:40px;">
+      {% for post in collections.posts %}
+      {% if post.data.category == cat.name %}
+      <article class="card">
+        <a href="{{ post.url }}" class="card-thumb">
+          <img src="{{ (post.data.title + ' 快连下载') | bingImg }}" alt="{{ post.data.title }}" loading="lazy" width="400" height="225">
+        </a>
+        <div class="card-body">
+          {% if post.data.tags and post.data.tags[0] %}
+          <span class="card-tag">{{ post.data.tags[0] }}</span>
+          {% endif %}
+          <h3><a href="{{ post.url }}">{{ post.data.title }}</a></h3>
+          <p>{{ post.data.description }}</p>
+          <p style="font-size:0.85rem;color:var(--muted);margin-top:8px;">{{ post.date | dateZh }}</p>
+        </div>
+      </article>
+      {% endif %}
+      {% endfor %}
+    </div>
+  {% endfor %}
+
+    <header class="section-head">
+      <h2>最新文章</h2>
+    </header>
+    <div class="card-grid">
+      {% for post in collections.posts %}
+      <article class="card">
+        <a href="{{ post.url }}" class="card-thumb">
+          <img src="{{ (post.data.title + ' 快连下载') | bingImg }}" alt="{{ post.data.title }}" loading="lazy" width="400" height="225">
+        </a>
+        <div class="card-body">
+          <span class="card-tag">{{ post.data.category or '版本动态' }}</span>
+          <h3><a href="{{ post.url }}">{{ post.data.title }}</a></h3>
+          <p>{{ post.data.description }}</p>
+        </div>
+      </article>
+      {% endfor %}
+    </div>
+
+    <header class="section-head" style="margin-top:48px;">
+      <h2>热门标签</h2>
+    </header>
+    <div class="tag-cloud">
+      {% for tag in collections.tagList %}
+      <a href="/tags/{{ tag | slug }}/">{{ tag }}</a>
+      {% endfor %}
+    </div>
+  </div>
+</section>

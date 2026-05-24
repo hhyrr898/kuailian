@@ -1,0 +1,19 @@
+{
+  "brand": "快连下载",
+  "title": "快连下载 | 快连官方客户端",
+  "description": "快连官方 Windows、macOS、Android、iOS 客户端获取与安装配置说明。",
+  "keywords": "快连下载,快连官方,快连客户端,快连电脑版,快连安卓,快连苹果",
+  "laId": "3K7l95Zodr0uFrIN",
+  "domain": "your-domain.com",
+  "nav": [
+    { "label": "首页", "url": "/", "key": "home" },
+    { "label": "博客", "url": "/blog/", "key": "blog" },
+    { "label": "下载中心", "url": "/download.html", "key": "download" }
+  ],
+  "categories": [
+    { "slug": "guide", "name": "使用教程" },
+    { "slug": "release", "name": "版本动态" },
+    { "slug": "faq", "name": "常见问题" },
+    { "slug": "resource", "name": "资源百科" }
+  ]
+}

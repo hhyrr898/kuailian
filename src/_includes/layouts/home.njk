@@ -1,0 +1,95 @@
+---
+layout: layouts/base.njk
+---
+<section class="hero">
+  <div class="container hero-grid">
+    <div>
+      <h1>快连官方 · 全平台客户端获取</h1>
+      <p class="hero-lead">{{ heroLead or site.description }}</p>
+      <div class="hero-actions">
+        <a class="btn btn-primary" href="/dows.html?path=/">下载</a>
+        <a class="btn btn-outline" href="/blog/">教程大全</a>
+      </div>
+    </div>
+    <div class="hero-visual">
+      <img src="{{ '快连官方 客户端下载' | bingImg }}" alt="快连官方客户端 Windows macOS Android iOS" width="640" height="360" loading="eager">
+    </div>
+  </div>
+</section>
+
+<section class="section" id="section-download">
+  <div class="container">
+    <header class="section-head">
+      <h2>快连官方各平台下载</h2>
+    </header>
+    <div class="download-grid">
+      <article class="download-tile" id="section-win">
+        <div class="icon" aria-hidden="true">🪟</div>
+        <h3>Windows 版快连官方</h3>
+        <p>Win10 / Win11 64 位桌面版</p>
+        <a class="btn btn-primary" href="/dows.html?path=/">下载</a>
+      </article>
+      <article class="download-tile" id="section-mac">
+        <div class="icon" aria-hidden="true">🍎</div>
+        <h3>macOS 版快连官方</h3>
+        <p>Apple 芯片与 Intel 双架构</p>
+        <a class="btn btn-primary" href="/dows.html?path=/">下载</a>
+      </article>
+      <article class="download-tile" id="section-android">
+        <div class="icon" aria-hidden="true">🤖</div>
+        <h3>Android 版快连官方</h3>
+        <p>手机与平板通用</p>
+        <a class="btn btn-primary" href="/dows.html?path=/">下载</a>
+      </article>
+      <article class="download-tile" id="section-ios">
+        <div class="icon" aria-hidden="true">📱</div>
+        <h3>iOS 版快连官方</h3>
+        <p>iPhone / iPad</p>
+        <a class="btn btn-primary" href="/dows.html?path=/">下载</a>
+      </article>
+    </div>
+  </div>
+</section>
+
+<section class="section" id="section-resources">
+  <div class="container">
+    <header class="section-head">
+      <h2>快连下载精选内容</h2>
+    </header>
+    <div class="card-grid">
+      {% for item in homeEntries %}
+      <article class="card">
+        <a href="{{ item.href }}" class="card-thumb">
+          <img src="{{ item.img | bingImg }}" alt="{{ item.img }}" width="400" height="225" loading="lazy">
+        </a>
+        <div class="card-body">
+          <span class="card-tag">{{ item.tag }}</span>
+          <h3><a href="{{ item.href }}">{{ item.title }}</a></h3>
+          <p>{{ item.desc }}</p>
+        </div>
+      </article>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+<section class="section" id="section-version">
+  <div class="container info-panel">
+    <h2>快连官方版本说明</h2>
+    <p>安装完成后可在应用内「关于」查看版本号。Windows 需 64 位系统；macOS 请区分 arm64 与 x64 安装包；移动端建议预留 200MB 以上空间。</p>
+  </div>
+</section>
+
+<section class="section" id="section-compat">
+  <div class="container info-panel">
+    <h2>系统兼容要求</h2>
+    <p>系统版本过低可能导致安装失败或闪退。建议将 Windows、macOS 或移动系统更新至官方支持的最新稳定版后再安装快连官方客户端。</p>
+  </div>
+</section>
+
+<section class="section" id="section-verify">
+  <div class="container info-panel">
+    <h2>安装包核对</h2>
+    <p>请通过本站下载中心获取客户端，核对文件大小与版本信息。若与说明不一致，请勿安装并重新获取快连官方安装包。</p>
+  </div>
+</section>

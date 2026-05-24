@@ -1,0 +1,81 @@
+name: Gemini Auto Content Updater
+
+on:
+  schedule:
+    - cron: "12 0 * * *"
+
+  workflow_dispatch:
+    inputs:
+      post_count:
+        description: "本次手动测试生成的文章数量（可選 1-9，不填寫默認 1 篇）"
+        required: true
+        default: "1"
+
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: "true"
+  TZ: "Asia/Hong_Kong"
+
+permissions:
+  contents: write
+
+jobs:
+  build-and-post:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+          cache: npm
+
+      - name: Install Dependencies
+        run: npm ci
+
+      - name: Run Gemini Content Generator
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+        run: node autobot.js ${{ github.event.inputs.post_count || '1' }}
+
+      - name: Build Eleventy Site
+        env:
+          INDEXNOW_KEY: ${{ secrets.INDEXNOW_KEY }}
+        run: |
+          chmod -R +x ./node_modules/.bin/ 2>/dev/null || true
+          if [ -n "$INDEXNOW_KEY" ]; then
+            echo "$INDEXNOW_KEY" > "./src/${INDEXNOW_KEY}.txt"
+          fi
+          npm run build
+          if [ -n "$INDEXNOW_KEY" ]; then
+            echo "$INDEXNOW_KEY" > "./_site/${INDEXNOW_KEY}.txt"
+            echo "已在 src 与 _site 创建 IndexNow 验证文件"
+          fi
+
+      - name: Commit and Push Changes back to Repo
+        env:
+          INDEXNOW_KEY: ${{ secrets.INDEXNOW_KEY }}
+        run: |
+          git config --global user.name "Gemini-Content-Bot"
+          git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add src/posts/ src/keywords.json
+          if [ -n "$INDEXNOW_KEY" ] && [ -f "src/${INDEXNOW_KEY}.txt" ]; then
+            git add "src/${INDEXNOW_KEY}.txt"
+          fi
+          if ! git diff --cached --quiet; then
+            git commit -m "🤖 [Bot] 自动同步：更新文章、词库与 IndexNow 验证文件"
+            git push
+            echo "已推送新文章到 GitHub"
+          else
+            echo "无文件变更，跳过推送"
+          fi
+
+      - name: Push URLs to Bing IndexNow
+        env:
+          INDEXNOW_KEY: ${{ secrets.INDEXNOW_KEY }}
+          SITE_DOMAIN: ${{ secrets.SITE_DOMAIN }}
+        run: node scripts/bing-indexnow-push.mjs

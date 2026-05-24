@@ -1,0 +1,31 @@
+<footer class="site-footer">
+  <div class="container footer-grid">
+    <section>
+      <h4>{{ site.brand }}</h4>
+      <p style="color:rgba(255,255,255,0.65);font-size:0.9rem;line-height:1.7;">快连官方 Windows、macOS、Android、iOS 客户端获取与配置说明。</p>
+    </section>
+    <section>
+      <h4>站点导航</h4>
+      <a href="/">快连下载</a>
+      <a href="/blog/">快连教程</a>
+      <a href="/dows.html?path=/">快连官方下载</a>
+    </section>
+    <section>
+      <h4>内容目录</h4>
+      {% for cat in site.categories %}
+      <a href="/blog/#cat-{{ cat.slug }}">{{ cat.name }}</a>
+      {% endfor %}
+    </section>
+    <section>
+      <h4>热门标签</h4>
+      <div class="tag-cloud">
+        {% for tag in collections.tagList | slice(0, 8) %}
+        <a href="/tags/{{ tag | slug }}/">{{ tag }}</a>
+        {% endfor %}
+      </div>
+    </section>
+  </div>
+  <div class="container footer-bottom">
+    <p>© {{ yearNow }} {{ site.brand }} · 保留所有权利</p>
+  </div>
+</footer>

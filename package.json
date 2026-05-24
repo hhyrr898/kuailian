@@ -1,0 +1,22 @@
+{
+  "name": "kuailian-download-site",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "build": "eleventy",
+    "start": "eleventy --serve",
+    "dev": "eleventy --serve --watch",
+    "seed": "node scripts/seed-posts.mjs",
+    "generate": "node scripts/generate-article.mjs",
+    "generate:batch": "node scripts/generate-article.mjs --count=3",
+    "autobot": "node autobot.js",
+    "bing:push": "node scripts/bing-indexnow-push.mjs",
+    "worker:deploy": "wrangler deploy"
+  },
+  "devDependencies": {
+    "@11ty/eleventy": "^3.0.0"
+  },
+  "dependencies": {
+    "@google/generative-ai": "^0.21.0"
+  }
+}
