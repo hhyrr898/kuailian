@@ -4,8 +4,8 @@
 <title>{{ tag }} · 快连下载</title>
 <meta name="description" content="{{ tag }}相关的快连下载教程与客户端使用说明。">
 {% else %}
-<title>{% if pageTitle %}{{ pageTitle }} | {% endif %}{{ site.brand }}</title>
-<meta name="description" content="{{ pageDescription or site.description }}">
+<title>{% set docTitle = pageTitle or title %}{% if docTitle %}{{ docTitle }} | {% endif %}{{ site.brand }}</title>
+<meta name="description" content="{{ pageDescription or description or site.description }}">
 {% endif %}
 <meta name="keywords" content="{{ pageKeywords or site.keywords }}">
 <link rel="stylesheet" href="/css/style.css">
