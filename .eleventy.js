@@ -1,6 +1,14 @@
 const SYSTEM_TAGS = new Set(["posts", "all", "post", "blog"]);
+const siteData = require("./src/_data/site.json");
+
+function resolveSiteUrl() {
+  const raw = process.env.SITE_DOMAIN || siteData.domain || "your-domain.com";
+  const host = String(raw).replace(/^https?:\/\//, "").replace(/\/$/, "");
+  return `https://${host}`;
+}
 
 module.exports = function (eleventyConfig) {
+  eleventyConfig.addGlobalData("siteUrl", resolveSiteUrl());
   eleventyConfig.ignores.add("src/dows.html");
 
   eleventyConfig.addPassthroughCopy("src/css");
@@ -61,6 +69,6 @@ module.exports = function (eleventyConfig) {
     },
     htmlTemplateEngine: "njk",
     markdownTemplateEngine: "njk",
-    templateFormats: ["md", "njk", "html"]
+    templateFormats: ["md", "njk", "html", "11ty.js"]
   };
 };
