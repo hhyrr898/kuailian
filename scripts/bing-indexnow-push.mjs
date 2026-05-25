@@ -37,12 +37,26 @@ function siteHost() {
   return DOMAIN.replace(/^https?:\/\//, "").replace(/\/$/, "");
 }
 
+function normalizeUrl(url) {
+  try {
+    const u = new URL(url);
+    u.pathname = u.pathname.replace(/\/{2,}/g, "/");
+    if (u.pathname.length > 1 && u.pathname.endsWith("/")) {
+      u.pathname = u.pathname.slice(0, -1);
+    }
+    return u.href;
+  } catch {
+    return url.replace(/([^:]\/)\/+/g, "$1").replace(/\/$/, "");
+  }
+}
+
 function permalinkToUrl(permalink) {
   const host = siteHost();
   let p = String(permalink || "").trim();
   if (!p.startsWith("/")) p = `/${p}`;
-  if (!p.endsWith("/")) p += "/";
-  return `https://${host}${p}`;
+  p = p.replace(/\/{2,}/g, "/");
+  if (p.length > 1 && p.endsWith("/")) p = p.slice(0, -1);
+  return normalizeUrl(`https://${host}${p}`);
 }
 
 function parsePostFrontMatter(filePath) {
@@ -151,7 +165,7 @@ function resolveUrlListFromPermalinks(permalinks) {
   for (const link of permalinks) {
     const html = htmlPathForPermalink(link);
     if (html) {
-      urlList.push(toPublicUrl(html));
+      urlList.push(normalizeUrl(toPublicUrl(html)));
     } else {
       urlList.push(permalinkToUrl(link));
     }
@@ -225,7 +239,38 @@ async function main() {
     process.exit(1);
   }
 
-  await waitForValidationFile();
+  const validationOk = await waitForValidationFile();
+  const keyUrl = `https://${siteHost()}/${BING_KEY}.txt`;
+  try {
+    const keyBody = await new Promise((resolve, reject) => {
+      https
+        .get(keyUrl, (res) => {
+          let data = "";
+          res.on("data", (c) => (data += c));
+          res.on("end", () => resolve({ code: res.statusCode, data: data.trim() }));
+        })
+        .on("error", reject);
+    });
+    if (keyBody.code !== 200) {
+      console.error(`验证文件不可访问: ${keyUrl} (HTTP ${keyBody.code})`);
+      process.exit(1);
+    }
+    if (keyBody.data !== BING_KEY) {
+      console.error(
+        `验证文件内容必须与 INDEXNOW_KEY 完全一致。\n` +
+          `当前文件长度 ${keyBody.data.length}，密钥长度 ${BING_KEY.length}`
+      );
+      process.exit(1);
+    }
+    console.log("验证文件内容与密钥一致");
+  } catch (e) {
+    console.error(`无法读取验证文件 ${keyUrl}: ${e.message}`);
+    process.exit(1);
+  }
+
+  if (!validationOk) {
+    console.log("提示: 验证文件探测曾超时，若推送 403 请在 Bing 站长工具完成站点验证");
+  }
 
   let urlList;
 
@@ -242,7 +287,7 @@ async function main() {
     urlList.forEach((u) => console.log(`  - ${u}`));
   } else {
     const htmlFiles = getAllHtmlFiles(OUTPUT_DIR);
-    urlList = [...new Set(htmlFiles.map(toPublicUrl))].filter(
+    urlList = [...new Set(htmlFiles.map((f) => normalizeUrl(toPublicUrl(f))))].filter(
       (url) =>
         !url.includes("404") &&
         !url.includes("admin") &&

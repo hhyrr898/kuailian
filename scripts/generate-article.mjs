@@ -34,12 +34,16 @@ function parseArgs() {
 }
 
 function slugify(str) {
-  const base = String(str)
-    .trim()
-    .toLowerCase()
-    .replace(/\s+/g, "-")
-    .replace(/[^\w\u4e00-\u9fff-]/g, "")
-    .slice(0, 48);
+  const base =
+    String(str)
+      .trim()
+      .toLowerCase()
+      .replace(/[^a-z0-9\u4e00-\u9fff]+/g, "-")
+      .replace(/^-+|-+$/g, "")
+      .replace(/[\u4e00-\u9fff]/g, "")
+      .replace(/-+/g, "-")
+      .replace(/^-+|-+$/g, "")
+      .slice(0, 40) || "kuailian";
   return `${base}-${Date.now().toString(36)}`;
 }
 
