@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
+    "icons": "node scripts/generate-favicon.mjs",
     "build": "node scripts/write-indexnow-key.mjs && eleventy",
     "start": "eleventy --serve",
     "dev": "eleventy --serve --watch",
@@ -15,7 +16,9 @@
     "worker:deploy": "wrangler deploy"
   },
   "devDependencies": {
-    "@11ty/eleventy": "^3.0.0"
+    "@11ty/eleventy": "^3.0.0",
+    "sharp": "^0.34.5",
+    "to-ico": "^1.1.5"
   },
   "dependencies": {
     "@google/generative-ai": "^0.21.0"
