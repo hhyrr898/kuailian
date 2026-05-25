@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
-    "build": "eleventy",
+    "build": "node scripts/write-indexnow-key.mjs && eleventy",
     "start": "eleventy --serve",
     "dev": "eleventy --serve --watch",
     "seed": "node scripts/seed-posts.mjs",

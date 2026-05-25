@@ -45,16 +45,10 @@ jobs:
       - name: Build Eleventy Site
         env:
           INDEXNOW_KEY: ${{ secrets.INDEXNOW_KEY }}
+          SITE_DOMAIN: ${{ secrets.SITE_DOMAIN }}
         run: |
           chmod -R +x ./node_modules/.bin/ 2>/dev/null || true
-          if [ -n "$INDEXNOW_KEY" ]; then
-            echo "$INDEXNOW_KEY" > "./src/${INDEXNOW_KEY}.txt"
-          fi
           npm run build
-          if [ -n "$INDEXNOW_KEY" ]; then
-            echo "$INDEXNOW_KEY" > "./_site/${INDEXNOW_KEY}.txt"
-            echo "已在 src 与 _site 创建 IndexNow 验证文件"
-          fi
 
       - name: Commit and Push Changes back to Repo
         env:
@@ -78,5 +72,6 @@ jobs:
         env:
           INDEXNOW_KEY: ${{ secrets.INDEXNOW_KEY }}
           SITE_DOMAIN: ${{ secrets.SITE_DOMAIN }}
+          INDEXNOW_HOST: ${{ secrets.INDEXNOW_HOST }}
           PUSH_NEW_ONLY: "1"
         run: node scripts/bing-indexnow-push.mjs

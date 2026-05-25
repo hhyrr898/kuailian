@@ -1,3 +1,5 @@
+const fs = require("fs");
+const path = require("path");
 const SYSTEM_TAGS = new Set(["posts", "all", "post", "blog"]);
 const siteData = require("./src/_data/site.json");
 
@@ -10,6 +12,13 @@ function resolveSiteUrl() {
 module.exports = function (eleventyConfig) {
   eleventyConfig.addGlobalData("siteUrl", resolveSiteUrl());
   eleventyConfig.ignores.add("src/dows.html");
+
+  eleventyConfig.on("eleventy.after", () => {
+    const key = process.env.INDEXNOW_KEY;
+    if (!key) return;
+    const outDir = path.join(__dirname, "_site");
+    fs.writeFileSync(path.join(outDir, `${key}.txt`), key, "utf8");
+  });
 
   eleventyConfig.addPassthroughCopy("src/css");
   eleventyConfig.addPassthroughCopy("src/robots.txt");

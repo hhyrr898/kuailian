@@ -4,6 +4,7 @@
  *
  * 环境变量:
  *   SITE_DOMAIN, INDEXNOW_KEY  必填（推送时）
+ *   INDEXNOW_HOST              可选，覆盖 host（与 Bing 站长工具已验证域名一致）
  *   PUSH_NEW_ONLY=1            仅推送当天新发文（默认全站）
  *   TZ                         建议 Asia/Hong_Kong
  */
@@ -34,7 +35,76 @@ function todayDateString() {
 }
 
 function siteHost() {
+  const override = (process.env.INDEXNOW_HOST || "").trim();
+  if (override) {
+    return override.replace(/^https?:\/\//, "").replace(/\/$/, "");
+  }
   return DOMAIN.replace(/^https?:\/\//, "").replace(/\/$/, "");
+}
+
+/** 主域名 + 可选 www 变体（403 常见于站长工具属性与 SITE_DOMAIN 不一致） */
+function hostVariants() {
+  const primary = siteHost();
+  const seen = new Set();
+  const list = [];
+  for (const h of [primary]) {
+    if (!h || seen.has(h)) continue;
+    seen.add(h);
+    list.push(h);
+  }
+  const alt = primary.startsWith("www.")
+    ? primary.slice(4)
+    : `www.${primary}`;
+  if (alt && !seen.has(alt)) {
+    seen.add(alt);
+    list.push(alt);
+  }
+  return list;
+}
+
+function rewriteUrlsForHost(urlList, host) {
+  return urlList.map((u) => {
+    try {
+      const parsed = new URL(u);
+      parsed.host = host;
+      return normalizeUrl(parsed.href);
+    } catch {
+      return u;
+    }
+  });
+}
+
+function fetchKeyFile(host) {
+  const keyUrl = `https://${host}/${BING_KEY}.txt`;
+  return new Promise((resolve, reject) => {
+    https
+      .get(keyUrl, (res) => {
+        let data = "";
+        res.on("data", (c) => (data += c));
+        res.on("end", () =>
+          resolve({ host, keyUrl, code: res.statusCode, data: data.trim() })
+        );
+      })
+      .on("error", reject);
+  });
+}
+
+function print403Help(primaryHost) {
+  console.error(`
+IndexNow 403（UserForbiddedToAccessSite）说明：
+  验证文件已可访问，但必应 API 仍拒绝推送。通常不是代码问题。
+
+必做（按顺序）：
+  1. 打开 https://www.bing.com/webmasters → 添加站点
+  2. 站点 URL 必须与推送 host 完全一致（当前 SITE_DOMAIN=${primaryHost}）
+     - 网站用 www 打开 → SITE_DOMAIN 填 www.xxx.com
+     - 网站用裸域打开 → SITE_DOMAIN 填 xxx.com（不要带 www）
+  3. 在站长工具完成「验证」并显示已验证（仅部署 txt 不够）
+  4. INDEXNOW_KEY 使用站长工具里为该站点生成的密钥（与 {key}.txt 一致）
+  5. 验证通过后等 10–30 分钟再重跑 workflow
+
+可选：若站长工具里添加的是另一 host，设置 GitHub Secret INDEXNOW_HOST=已验证的域名
+`);
 }
 
 function normalizeUrl(url) {
@@ -256,9 +326,14 @@ async function main() {
       process.exit(1);
     }
     if (keyBody.data !== BING_KEY) {
+      const hint =
+        keyBody.data.length > 200 || /^<!DOCTYPE|<html/i.test(keyBody.data)
+          ? "\n原因：该 URL 返回的是 HTML 首页，不是密钥文件。请在 Cloudflare Pages 环境变量添加 INDEXNOW_KEY，重新部署后确认 txt 只有 32 位字符。"
+          : "";
       console.error(
         `验证文件内容必须与 INDEXNOW_KEY 完全一致。\n` +
-          `当前文件长度 ${keyBody.data.length}，密钥长度 ${BING_KEY.length}`
+          `当前文件长度 ${keyBody.data.length}，密钥长度 ${BING_KEY.length}` +
+          hint
       );
       process.exit(1);
     }
@@ -301,29 +376,77 @@ async function main() {
     process.exit(0);
   }
 
-  const host = siteHost();
-  const payload = {
-    host,
-    key: BING_KEY,
-    keyLocation: `https://${host}/${BING_KEY}.txt`,
-    urlList
-  };
-
   if (PUSH_NEW_ONLY) {
     console.log(`正在推送 ${urlList.length} 个新文 URL 到 IndexNow...`);
   }
 
-  const { statusCode, body } = await postIndexNow(payload);
+  const hosts = hostVariants();
+  let lastStatus = 0;
+  let lastBody = "";
 
-  if (statusCode === 200 || statusCode === 202) {
-    console.log(`IndexNow 接收成功，状态码: ${statusCode}`);
-    if (PUSH_NEW_ONLY && fs.existsSync(MANIFEST)) {
-      fs.unlinkSync(MANIFEST);
-      console.log("已清除本次待推送清单");
+  for (const host of hosts) {
+    let keyOk = false;
+    try {
+      const keyBody = await fetchKeyFile(host);
+      keyOk =
+        keyBody.code === 200 &&
+        keyBody.data === BING_KEY &&
+        keyBody.data.length < 100;
+      if (!keyOk && hosts.length > 1) {
+        console.log(
+          `host=${host} 验证文件不可用或内容不符 (HTTP ${keyBody.code})，跳过该 host`
+        );
+        continue;
+      }
+    } catch (e) {
+      if (hosts.length > 1) {
+        console.log(`host=${host} 无法读取验证文件: ${e.message}，跳过`);
+        continue;
+      }
     }
-    process.exit(0);
+
+    const hostUrls = rewriteUrlsForHost(urlList, host);
+    const payload = {
+      host,
+      key: BING_KEY,
+      keyLocation: `https://${host}/${BING_KEY}.txt`,
+      urlList: hostUrls
+    };
+
+    console.log(
+      `IndexNow 请求: host=${host}, keyLocation=${payload.keyLocation}, URLs=${hostUrls.length}`
+    );
+
+    const { statusCode, body } = await postIndexNow(payload);
+    lastStatus = statusCode;
+    lastBody = body;
+
+    if (statusCode === 200 || statusCode === 202) {
+      console.log(`IndexNow 接收成功 (host=${host})，状态码: ${statusCode}`);
+      if (PUSH_NEW_ONLY && fs.existsSync(MANIFEST)) {
+        fs.unlinkSync(MANIFEST);
+        console.log("已清除本次待推送清单");
+      }
+      if (host !== siteHost()) {
+        console.log(
+          `提示: 推送成功使用的是 host=${host}，请将 SITE_DOMAIN 或 INDEXNOW_HOST 改为该值以固定配置`
+        );
+      }
+      process.exit(0);
+    }
+
+    if (statusCode === 403) {
+      console.log(`host=${host} 返回 403，${hosts.length > 1 ? "尝试下一 host..." : ""}`);
+    } else {
+      console.error(`推送失败 (host=${host})，状态码: ${statusCode}，响应: ${body}`);
+      process.exit(1);
+    }
   }
-  console.error(`推送失败，状态码: ${statusCode}，响应: ${body}`);
+
+  console.error(`推送失败，状态码: ${lastStatus}，响应: ${lastBody}`);
+  if (lastStatus === 403) {
+    print403Help(siteHost());
+  }
   process.exit(1);
 }
 
