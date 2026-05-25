@@ -1,17 +1,124 @@
 #!/usr/bin/env node
 /**
- * 将 _site 下 HTML 页面 URL 推送到必应 IndexNow
- * 环境变量: SITE_DOMAIN, INDEXNOW_KEY
+ * 将页面 URL 推送到必应 IndexNow
+ *
+ * 环境变量:
+ *   SITE_DOMAIN, INDEXNOW_KEY  必填（推送时）
+ *   PUSH_NEW_ONLY=1            仅推送当天新发文（默认全站）
+ *   TZ                         建议 Asia/Hong_Kong
  */
 import fs from "fs";
 import path from "path";
 import https from "https";
+import { execSync } from "child_process";
 import { fileURLToPath } from "url";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
-const OUTPUT_DIR = path.join(__dirname, "../_site");
+const ROOT = path.join(__dirname, "..");
+const OUTPUT_DIR = path.join(ROOT, "_site");
+const POSTS_DIR = path.join(ROOT, "src/posts");
+const MANIFEST = path.join(__dirname, ".indexnow-pending.json");
+
 const DOMAIN = process.env.SITE_DOMAIN || process.env.DOMAIN || "";
 const BING_KEY = process.env.INDEXNOW_KEY || "";
+const PUSH_NEW_ONLY =
+  process.env.PUSH_NEW_ONLY === "1" || process.env.PUSH_NEW_ONLY === "true";
+
+function todayDateString() {
+  return new Intl.DateTimeFormat("en-CA", {
+    timeZone: process.env.TZ || "Asia/Hong_Kong",
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit"
+  }).format(new Date());
+}
+
+function siteHost() {
+  return DOMAIN.replace(/^https?:\/\//, "").replace(/\/$/, "");
+}
+
+function permalinkToUrl(permalink) {
+  const host = siteHost();
+  let p = String(permalink || "").trim();
+  if (!p.startsWith("/")) p = `/${p}`;
+  if (!p.endsWith("/")) p += "/";
+  return `https://${host}${p}`;
+}
+
+function parsePostFrontMatter(filePath) {
+  const raw = fs.readFileSync(filePath, "utf8");
+  const m = raw.match(/^---\r?\n([\s\S]*?)\r?\n---/);
+  if (!m) return null;
+  const block = m[1];
+  const date = block.match(/^date:\s*(\S+)/m)?.[1]?.trim();
+  const permalink = block.match(/^permalink:\s*(\S+)/m)?.[1]?.trim();
+  const slug = path.basename(filePath, ".md");
+  return {
+    date,
+    permalink: permalink || `/posts/${slug}/`,
+    slug
+  };
+}
+
+function htmlPathForPermalink(permalink) {
+  let rel = permalink.replace(/^\/+/, "");
+  if (rel.endsWith("/")) rel = rel.slice(0, -1);
+  const candidates = [
+    path.join(OUTPUT_DIR, rel, "index.html"),
+    path.join(OUTPUT_DIR, `${rel}.html`)
+  ];
+  return candidates.find((p) => fs.existsSync(p)) || null;
+}
+
+function loadManifestPermalinks() {
+  if (!fs.existsSync(MANIFEST)) return [];
+  try {
+    const data = JSON.parse(fs.readFileSync(MANIFEST, "utf8"));
+    if (data.date && data.date !== todayDateString()) return [];
+    return Array.isArray(data.permalinks) ? data.permalinks : [];
+  } catch {
+    return [];
+  }
+}
+
+function getTodayPostsFromMarkdown() {
+  const today = todayDateString();
+  if (!fs.existsSync(POSTS_DIR)) return [];
+  const links = [];
+  for (const name of fs.readdirSync(POSTS_DIR)) {
+    if (!name.endsWith(".md")) continue;
+    const meta = parsePostFrontMatter(path.join(POSTS_DIR, name));
+    if (meta?.date === today) links.push(meta.permalink);
+  }
+  return links;
+}
+
+function getNewPostsFromGit() {
+  try {
+    const out = execSync(
+      "git diff --name-only --diff-filter=A HEAD~1 HEAD -- src/posts/",
+      { cwd: ROOT, encoding: "utf8", stdio: ["pipe", "pipe", "ignore"] }
+    ).trim();
+    if (!out) return [];
+    return out
+      .split(/\r?\n/)
+      .filter((f) => f.endsWith(".md"))
+      .map((f) => parsePostFrontMatter(path.join(ROOT, f))?.permalink)
+      .filter(Boolean);
+  } catch {
+    return [];
+  }
+}
+
+function collectNewOnlyPermalinks() {
+  const sets = [
+    loadManifestPermalinks(),
+    getTodayPostsFromMarkdown(),
+    getNewPostsFromGit()
+  ];
+  const merged = [...new Set(sets.flat())];
+  return merged;
+}
 
 function getAllHtmlFiles(dirPath, arrayOfFiles = []) {
   if (!fs.existsSync(dirPath)) return arrayOfFiles;
@@ -35,8 +142,23 @@ function toPublicUrl(filePath) {
   } else if (relativePath.endsWith(".html")) {
     relativePath = relativePath.slice(0, -5);
   }
-  const base = `https://${DOMAIN.replace(/^https?:\/\//, "").replace(/\/$/, "")}`;
-  return relativePath ? `${base}/${relativePath}` : `${base}/`;
+  const base = `https://${siteHost()}`;
+  return relativePath ? `${base}/${relativePath}/` : `${base}/`;
+}
+
+function resolveUrlListFromPermalinks(permalinks) {
+  const urlList = [];
+  for (const link of permalinks) {
+    const html = htmlPathForPermalink(link);
+    if (html) {
+      urlList.push(toPublicUrl(html));
+    } else {
+      urlList.push(permalinkToUrl(link));
+    }
+  }
+  return [...new Set(urlList)].filter(
+    (u) => !u.includes("404") && !u.includes("admin") && !u.endsWith(".txt")
+  );
 }
 
 function postIndexNow(payload) {
@@ -65,8 +187,7 @@ function postIndexNow(payload) {
 }
 
 async function waitForValidationFile(maxAttempts = 30, intervalMs = 5000) {
-  const host = DOMAIN.replace(/^https?:\/\//, "").replace(/\/$/, "");
-  const validationUrl = `https://${host}/${BING_KEY}.txt`;
+  const validationUrl = `https://${siteHost()}/${BING_KEY}.txt`;
   console.log(`检测线上验证文件: ${validationUrl}`);
 
   for (let i = 1; i <= maxAttempts; i++) {
@@ -106,21 +227,36 @@ async function main() {
 
   await waitForValidationFile();
 
-  const htmlFiles = getAllHtmlFiles(OUTPUT_DIR);
-  let urlList = htmlFiles.map(toPublicUrl);
-  urlList = [...new Set(urlList)].filter(
-    (url) =>
-      !url.includes("404") &&
-      !url.includes("admin") &&
-      !url.endsWith(".txt")
-  );
+  let urlList;
+
+  if (PUSH_NEW_ONLY) {
+    const today = todayDateString();
+    console.log(`PUSH_NEW_ONLY 模式：仅推送 ${today} 新发文`);
+    const permalinks = collectNewOnlyPermalinks();
+    if (permalinks.length === 0) {
+      console.log("今日无新文章 URL，跳过 IndexNow 推送");
+      process.exit(0);
+    }
+    urlList = resolveUrlListFromPermalinks(permalinks);
+    console.log(`识别到 ${permalinks.length} 篇新文，将推送 ${urlList.length} 个 URL：`);
+    urlList.forEach((u) => console.log(`  - ${u}`));
+  } else {
+    const htmlFiles = getAllHtmlFiles(OUTPUT_DIR);
+    urlList = [...new Set(htmlFiles.map(toPublicUrl))].filter(
+      (url) =>
+        !url.includes("404") &&
+        !url.includes("admin") &&
+        !url.endsWith(".txt")
+    );
+    console.log(`全站模式：正在推送 ${urlList.length} 个 URL 到 IndexNow...`);
+  }
 
   if (urlList.length === 0) {
-    console.log("未发现有效页面，无需推送");
+    console.log("无有效 URL，跳过推送");
     process.exit(0);
   }
 
-  const host = DOMAIN.replace(/^https?:\/\//, "").replace(/\/$/, "");
+  const host = siteHost();
   const payload = {
     host,
     key: BING_KEY,
@@ -128,11 +264,18 @@ async function main() {
     urlList
   };
 
-  console.log(`正在推送 ${urlList.length} 个 URL 到 IndexNow...`);
+  if (PUSH_NEW_ONLY) {
+    console.log(`正在推送 ${urlList.length} 个新文 URL 到 IndexNow...`);
+  }
+
   const { statusCode, body } = await postIndexNow(payload);
 
   if (statusCode === 200 || statusCode === 202) {
     console.log(`IndexNow 接收成功，状态码: ${statusCode}`);
+    if (PUSH_NEW_ONLY && fs.existsSync(MANIFEST)) {
+      fs.unlinkSync(MANIFEST);
+      console.log("已清除本次待推送清单");
+    }
     process.exit(0);
   }
   console.error(`推送失败，状态码: ${statusCode}，响应: ${body}`);

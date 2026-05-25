@@ -3,3 +3,4 @@ _site/
 .wrangler/
 .dev.vars
 *.log
+scripts/.indexnow-pending.json

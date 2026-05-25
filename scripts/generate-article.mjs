@@ -12,6 +12,7 @@ import { GoogleGenerativeAI } from "@google/generative-ai";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const postsDir = path.join(__dirname, "../src/posts");
+const indexNowManifest = path.join(__dirname, ".indexnow-pending.json");
 
 const TAG_POOL = [
   "快连下载", "Windows", "macOS", "Android", "iOS", "安装教程", "连接",
@@ -113,7 +114,7 @@ ${body}
   const file = path.join(postsDir, `${slug}.md`);
   fs.mkdirSync(postsDir, { recursive: true });
   fs.writeFileSync(file, fm, "utf8");
-  return file;
+  return { file, permalink: `/posts/${slug}/`, date };
 }
 
 async function main() {
@@ -124,13 +125,34 @@ async function main() {
   }
   const count = parseArgs();
   const genAI = new GoogleGenerativeAI(apiKey);
-  const files = [];
+  const created = [];
   for (let i = 0; i < count; i++) {
     console.log(`生成第 ${i + 1}/${count} 篇...`);
-    files.push(await generateOne(genAI));
+    created.push(await generateOne(genAI));
     if (i < count - 1) await new Promise((r) => setTimeout(r, 2000));
   }
-  console.log("完成:", files.join("\n"));
+
+  const today = new Date().toISOString().slice(0, 10);
+  let manifest = { date: today, permalinks: [] };
+  if (fs.existsSync(indexNowManifest)) {
+    try {
+      const old = JSON.parse(fs.readFileSync(indexNowManifest, "utf8"));
+      if (old.date === today && Array.isArray(old.permalinks)) {
+        manifest.permalinks = old.permalinks;
+      }
+    } catch {}
+  }
+  for (const item of created) {
+    if (!manifest.permalinks.includes(item.permalink)) {
+      manifest.permalinks.push(item.permalink);
+    }
+  }
+  fs.writeFileSync(indexNowManifest, JSON.stringify(manifest, null, 2), "utf8");
+  console.log("IndexNow 待推送:", manifest.permalinks.join(", "));
+  console.log(
+    "完成:",
+    created.map((x) => x.file).join("\n")
+  );
 }
 
 main().catch((e) => {

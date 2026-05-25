@@ -78,4 +78,5 @@ jobs:
         env:
           INDEXNOW_KEY: ${{ secrets.INDEXNOW_KEY }}
           SITE_DOMAIN: ${{ secrets.SITE_DOMAIN }}
+          PUSH_NEW_ONLY: "1"
         run: node scripts/bing-indexnow-push.mjs

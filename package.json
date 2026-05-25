@@ -11,6 +11,7 @@
     "generate:batch": "node scripts/generate-article.mjs --count=3",
     "autobot": "node autobot.js",
     "bing:push": "node scripts/bing-indexnow-push.mjs",
+    "bing:push:new": "node scripts/bing-indexnow-push.mjs",
     "worker:deploy": "wrangler deploy"
   },
   "devDependencies": {
