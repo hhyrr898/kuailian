@@ -45,7 +45,7 @@ jobs:
       - name: Build Eleventy Site
         env:
           INDEXNOW_KEY: ${{ secrets.INDEXNOW_KEY }}
-          SITE_DOMAIN: ${{ secrets.SITE_DOMAIN }}
+          SITE_DOMAIN: ${{ secrets.SITE_DOMAIN || vars.SITE_DOMAIN || 'kuailian-letsv.com' }}
         run: |
           chmod -R +x ./node_modules/.bin/ 2>/dev/null || true
           npm run build
@@ -71,7 +71,7 @@ jobs:
       - name: Push URLs to Bing IndexNow
         env:
           INDEXNOW_KEY: ${{ secrets.INDEXNOW_KEY }}
-          SITE_DOMAIN: ${{ secrets.SITE_DOMAIN }}
+          SITE_DOMAIN: ${{ secrets.SITE_DOMAIN || vars.SITE_DOMAIN || 'kuailian-letsv.com' }}
           INDEXNOW_HOST: ${{ secrets.INDEXNOW_HOST }}
           PUSH_NEW_ONLY: "1"
         run: node scripts/bing-indexnow-push.mjs

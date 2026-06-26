@@ -3,11 +3,9 @@
  * Gemini 内容生成入口（供 GitHub Actions 调用）
  * 用法: node autobot.js [1-9]
  */
-import { spawn } from "child_process";
-import path from "path";
-import { fileURLToPath } from "url";
+const { spawn } = require("child_process");
+const path = require("path");
 
-const __dirname = path.dirname(fileURLToPath(import.meta.url));
 let count = parseInt(process.argv[2] || "1", 10);
 if (Number.isNaN(count) || count < 1) count = 1;
 if (count > 9) count = 9;

@@ -4,7 +4,7 @@ const SYSTEM_TAGS = new Set(["posts", "all", "post", "blog"]);
 const siteData = require("./src/_data/site.json");
 
 function resolveSiteUrl() {
-  const raw = process.env.SITE_DOMAIN || siteData.domain || "your-domain.com";
+  const raw = process.env.SITE_DOMAIN || siteData.domain || "kuailian-letsv.com";
   const host = String(raw).replace(/^https?:\/\//, "").replace(/\/$/, "");
   return `https://${host}`;
 }
