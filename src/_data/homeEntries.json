@@ -26,5 +26,5 @@
   { "title": "快连下载分应用规则简介", "desc": "按需分流的基础概念", "href": "/posts/split-rules-intro/", "tag": "资源百科", "img": "快连下载 分流" },
   { "title": "快连下载企业批量部署思路", "desc": "IT 管理员分发与策略", "href": "/posts/enterprise-deploy/", "tag": "资源百科", "img": "快连下载 企业" },
   { "title": "快连下载教程大全", "desc": "Windows、macOS、安卓与苹果全平台文章", "href": "/blog/", "tag": "教程", "img": "快连下载 教程" },
-  { "title": "快连官方客户端下载", "desc": "Windows / macOS / Android / iOS 一键获取", "href": "/dows.html?path=/", "tag": "官方", "img": "快连官方 下载" }
+  { "title": "快连客户端下载", "desc": "Windows / macOS / Android / iOS 下载入口", "href": "/dows.html?path=/", "tag": "下载", "img": "快连 客户端 下载" }
 ]

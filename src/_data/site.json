@@ -1,8 +1,8 @@
 {
   "brand": "快连下载",
-  "title": "快连下载 | 快连官方客户端",
-  "description": "快连官方 Windows、macOS、Android、iOS 客户端获取与安装配置说明。",
-  "keywords": "快连下载,快连官方,快连客户端,快连电脑版,快连安卓,快连苹果",
+  "title": "快连下载与客户端安装指南",
+  "description": "整理快连 Windows、macOS、Android、iOS 客户端下载、安装权限、首次连接与常见问题处理方法。",
+  "keywords": "快连下载,快连客户端,快连安装,快连电脑版,快连安卓,快连苹果",
   "laId": "3K7l95Zodr0uFrIN",
   "domain": "kuailian-letsv.com",
   "siteUrlNote": "构建时优先使用环境变量 SITE_DOMAIN，生成 sitemap 绝对地址",
