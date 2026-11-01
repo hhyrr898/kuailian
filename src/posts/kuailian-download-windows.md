@@ -1,5 +1,4 @@
 ---
-noindex: true
 layout: layouts/post.njk
 title: "快连 Windows 版下载与安装：一份实操流程记录"
 description: "记录我在 Windows 11 上安装快连客户端的完整过程：从确认 3.8.2 版本安装包、核对文件信息，到安装目录、首次启动、账号登录与基础设置，逐步给出可复现的操作顺序，并整理下载来源、安装失败、登录异常等常见问题的"
