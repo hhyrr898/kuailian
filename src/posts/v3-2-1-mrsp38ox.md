@@ -1,4 +1,5 @@
 ---
+noindex: true
 layout: layouts/post.njk
 title: 别再问了！快连下载慢？最新版v3.2.1使用秘籍和常见问题大起底！
 description: 每次下载都慢到心碎？别急！这篇帖子帮你把快连下载的安装、加速秘籍、常见问题一次性说清楚，保你用完直呼「真香」！

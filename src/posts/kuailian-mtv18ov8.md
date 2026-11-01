@@ -1,4 +1,5 @@
 ---
+noindex: true
 layout: layouts/post.njk
 title: 别再等了！快连下载最新版，速度飙升秘籍大公开！
 description: 还在被下载慢折磨吗？快连下载最近有新动作！这篇保姆级教程告诉你咋更新、咋提速，常见问题也给你解决了，网速嗖嗖的！

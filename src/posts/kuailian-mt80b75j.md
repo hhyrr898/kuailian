@@ -1,4 +1,5 @@
 ---
+noindex: true
 layout: layouts/post.njk
 title: 下载慢到崩溃？试试快连下载！手把手教你飙车下载，文件秒到！
 description: 受够了下载龟速？快连下载这工具真香！从安装到高阶用法，这篇攻略让你彻底告别慢吞吞，各种文件都能唰唰下，别再等了！

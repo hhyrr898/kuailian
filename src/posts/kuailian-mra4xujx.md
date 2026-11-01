@@ -1,4 +1,5 @@
 ---
+noindex: true
 layout: layouts/post.njk
 title: 网盘限速？不存在的！快连下载：资源秒到的黑科技，真香警告！
 description: 还在为下载慢抓狂？快连下载这神器，分分钟帮你搞定各种资源。从安装到上手，保姆级教程加常见问题解答，让你分分钟起飞！

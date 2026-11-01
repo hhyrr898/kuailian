@@ -1,4 +1,5 @@
 ---
+noindex: true
 layout: layouts/post.njk
 title: 「快连下载」用不爽？手把手教你从小白变高手！
 description: 下载慢、安装错？别急！这篇干货帮你彻底搞懂「快连下载」的各种疑难杂症，亲测有效！轻松告别龟速，享受飞一般的下载体验。

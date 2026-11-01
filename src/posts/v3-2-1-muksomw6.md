@@ -1,4 +1,5 @@
 ---
+noindex: true
 layout: layouts/post.njk
 title: 告别龟速！快连下载v3.2.1真香体验：包你文件秒到手！
 description: 文件下载慢到心梗？别慌！快连下载v3.2.1最新攻略来啦！手把手教你从安装到进阶，瞬间提速，彻底告别卡顿。实测体验，简直不要太爽！

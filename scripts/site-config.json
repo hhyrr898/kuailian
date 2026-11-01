@@ -1,0 +1,26 @@
+{
+  "brand": "快连",
+  "domain": "kuailian-letsv.com",
+  "locale": "zh-CN",
+  "blogDir": "src/posts",
+  "slugPrefix": "kuailian",
+  "keywordsPath": "src/keywords.json",
+  "linkPool": [
+    "/posts3-5-0-mrvj9u6x/",
+    "/posts3-5-0-mswkxj4f/",
+    "/posts3-5-0-mutec05s/",
+    "/posts3-8-2-mr4eu11z/",
+    "/postsaccount-security/"
+  ],
+  "minChars": 750,
+  "maxChars": 2200,
+  "fm": {
+    "layout": "layouts/post.njk",
+    "hasCategory": true,
+    "tagsStyle": "yaml",
+    "firstTag": null,
+    "permalink": true,
+    "coverKey": null,
+    "coverDir": "/static/posts/"
+  }
+}

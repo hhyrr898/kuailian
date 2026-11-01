@@ -1,4 +1,5 @@
 ---
+noindex: true
 layout: layouts/post.njk
 title: 还在为下载速度慢抓狂？快连下载这神器，帮你一键告别龟速！
 description: 别再纠结了！想让你的下载速度起飞？这篇文章手把手教你玩转快连下载，再也不用眼巴巴等进度条了，数字生活瞬间提速！

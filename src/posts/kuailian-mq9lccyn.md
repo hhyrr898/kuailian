@@ -1,4 +1,5 @@
 ---
+noindex: true
 layout: layouts/post.njk
 title: 快速稳定获取所需：快连下载客户端使用指南
 description: 本指南将详细介绍快连下载客户端的安装与使用方法，助您轻松实现文件高效下载。了解快连如何优化下载体验，确保稳定快速获取各类数字资源。

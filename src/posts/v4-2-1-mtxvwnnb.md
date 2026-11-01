@@ -1,4 +1,5 @@
 ---
+noindex: true
 layout: layouts/post.njk
 title: 别再等了！快连下载v4.2.1：这下载速度，绝了！
 description: 下载慢到崩溃？快连下载v4.2.1更新后，速度简直起飞！这篇手把手教程，帮你轻松搞定安装，常见问题也给你解决了，快来看看吧！

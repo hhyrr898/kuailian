@@ -1,4 +1,5 @@
 ---
+noindex: true
 layout: layouts/post.njk
 title: 告别龟速！快连下载神助攻，你的数字资源不再难搞
 description: 大文件慢得心烦？别再忍了！手把手教你玩转快连下载这神器，从装好到起飞，各种数字资源想下就下，告别漫长等待，体验嗖嗖的下载速度！

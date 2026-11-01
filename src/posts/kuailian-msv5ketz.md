@@ -1,4 +1,5 @@
 ---
+noindex: true
 layout: layouts/post.njk
 title: 快连下载龟速？频繁断线？手把手教你解决这些烦人问题！
 description: 快连下载文件慢、老是连不上？别愁了！这篇帮你扒拉扒拉它那些常见毛病，一步步教你搞定，享受飞一般的下载体验！

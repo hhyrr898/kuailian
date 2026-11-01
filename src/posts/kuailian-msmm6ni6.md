@@ -1,4 +1,5 @@
 ---
+noindex: true
 layout: layouts/post.njk
 title: 告别龟速！快连下载神器上手全攻略，新人也能秒变下载达人！
 description: 刚入坑快连下载？别怕！这篇帖子手把手教你从安装到起飞，常见问题帮你提前排雷。看完你就是下载圈里的老司机了！

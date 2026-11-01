@@ -1,4 +1,5 @@
 ---
+noindex: true
 layout: layouts/post.njk
 title: 快连下载又卡又慢？这几招让你体验飞一般的感觉！
 description: 快连下载慢得让人抓狂？别急！这篇攻略教你几招，瞬间加速，告别卡顿和掉线，体验啥叫\"飞\"一般的感觉！

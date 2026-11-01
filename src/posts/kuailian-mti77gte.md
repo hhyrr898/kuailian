@@ -1,4 +1,5 @@
 ---
+noindex: true
 layout: layouts/post.njk
 title: 还在等啥？快连下载这神器，资源秒到手，真香警告！
 description: 下载速度慢到想砸电脑？资源永远找不到？别急！快连下载这货，给你整明白了！手把手教你咋用，速度飞起，啥都能下，从此告别龟速！

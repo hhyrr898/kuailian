@@ -1,4 +1,5 @@
 ---
+noindex: true
 layout: layouts/post.njk
 title: 告别龟速卡顿！快连下载常见问题与实用技巧全解析
 description: 快连下载老是慢吞吞、卡住、找不到文件？别方！这篇超实用攻略，手把手教你搞定各种疑难杂症，告别下载烦恼，体验飞一般的感觉！

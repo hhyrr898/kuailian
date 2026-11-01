@@ -1,4 +1,5 @@
 ---
+noindex: true
 layout: layouts/post.njk
 title: 文件下载总断？别急！快连下载神器来了，大文件也能秒下！
 description: 大文件下载慢到哭？动不动就中断？这篇快连下载完全攻略，帮你从安装到避坑，轻松搞定所有烦恼！

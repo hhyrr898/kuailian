@@ -12,7 +12,7 @@ module.exports = class {
 
   render(data) {
     const base = (data.siteUrl || "").replace(/\/$/, "");
-    const posts = data.collections.posts || [];
+    const posts = (data.collections.posts || []).filter((p) => !(p.data && p.data.noindex));
     const tagList = data.collections.tagList || [];
     const lines = [];
 

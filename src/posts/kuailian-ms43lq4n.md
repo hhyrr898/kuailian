@@ -1,4 +1,5 @@
 ---
+noindex: true
 layout: layouts/post.njk
 title: 告别乌龟速：快连下载这神器，真能极速下电影游戏？
 description: 下个文件等半天，这谁受得了？今天咱就聊聊快连下载，从咋用、能干啥到常见问题，手把手教你把网速榨干，从此告别龟速体验！

@@ -1,4 +1,5 @@
 ---
+noindex: true
 layout: layouts/post.njk
 title: 快连下载：探究其版本演进与多维应用场景
 description: 深入了解快连下载的最新版本动态，探索其在大型文件传输、软件更新及数据备份等多样化场景中的高效应用，助您获得稳定流畅的下载体验。

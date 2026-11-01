@@ -1,4 +1,5 @@
 ---
+noindex: true
 layout: layouts/post.njk
 title: 快连下载：别再被龟速折磨了！我教你几招，文件秒到家！
 description: 是不是总遇到快连下载慢吞吞、装不上、连不上的问题？这篇帖子教你几招，帮你把这些破事儿都搞定，文件嗖嗖地就到手了！

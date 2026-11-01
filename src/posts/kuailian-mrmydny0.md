@@ -1,4 +1,5 @@
 ---
+noindex: true
 layout: layouts/post.njk
 title: 快连下载真香！资源秒到手，告别龟速等待！
 description: 下载东西慢到抓狂？好资源总是找不到？别再瞎折腾了！今天就教你怎么用快连下载，分分钟搞定文件，从此告别等待，享受飞一般的数字生活！
