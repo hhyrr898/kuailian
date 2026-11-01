@@ -49,9 +49,6 @@ module.exports = class {
       push(`${base}${path}`, lastmod, "0.7", "monthly");
     }
 
-    for (const tag of tagList) {
-      push(`${base}/tags/${slug(tag)}/`, null, "0.5", "weekly");
-    }
 
     return [
       '<?xml version="1.0" encoding="UTF-8"?>',
