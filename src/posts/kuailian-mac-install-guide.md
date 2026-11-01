@@ -1,5 +1,4 @@
 ---
-noindex: true
 layout: layouts/post.njk
 title: "快连 macOS 版安装教程：权限与首次连接"
 description: "本文记录我在 macOS 上安装快连 3.8.2 版的完整过程，包括下载、拖拽安装、系统权限授权和首次连接设置。针对权限弹窗和连接失败给出了实测有效的处理方法，适合刚接触 Mac 版快连的朋友参考。"
