@@ -1,4 +1,5 @@
-﻿---
+---
+noindex: true
 layout: layouts/post.njk
 title: 游戏场景快连下载延迟
 description: 游戏场景快连下载延迟详细说明，涵盖快连下载后的配置步骤与注意事项。

@@ -1,4 +1,5 @@
-﻿---
+---
+noindex: true
 layout: layouts/post.njk
 title: 快连下载卸载与残留清理
 description: 快连下载卸载与残留清理详细说明，涵盖快连下载后的配置步骤与注意事项。

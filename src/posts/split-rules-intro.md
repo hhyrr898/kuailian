@@ -1,4 +1,5 @@
-﻿---
+---
+noindex: true
 layout: layouts/post.njk
 title: 快连下载分应用规则简介
 description: 快连下载分应用规则简介详细说明，涵盖快连下载后的配置步骤与注意事项。

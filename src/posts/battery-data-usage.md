@@ -1,4 +1,5 @@
-﻿---
+---
+noindex: true
 layout: layouts/post.njk
 title: 快连下载流量与电量消耗
 description: 快连下载流量与电量消耗详细说明，涵盖快连下载后的配置步骤与注意事项。

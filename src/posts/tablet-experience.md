@@ -1,4 +1,5 @@
-﻿---
+---
+noindex: true
 layout: layouts/post.njk
 title: 平板设备快连下载横屏体验
 description: 平板设备快连下载横屏体验详细说明，涵盖快连下载后的配置步骤与注意事项。

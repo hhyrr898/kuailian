@@ -1,4 +1,5 @@
-﻿---
+---
+noindex: true
 layout: layouts/post.njk
 title: Android 版快连下载与安装
 description: Android 手机上安装快连客户端的检查步骤，包含存储空间、未知来源权限、首次连接和后台运行设置。

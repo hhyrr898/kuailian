@@ -1,4 +1,5 @@
-﻿---
+---
+noindex: true
 layout: layouts/post.njk
 title: 快连下载夜间自动重连
 description: 快连下载夜间自动重连详细说明，涵盖快连下载后的配置步骤与注意事项。

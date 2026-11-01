@@ -1,4 +1,5 @@
-﻿---
+---
+noindex: true
 layout: layouts/post.njk
 title: iOS 版快连下载与描述文件
 description: iPhone 和 iPad 安装快连后的 VPN 配置、描述文件确认、蜂窝网络切换和后台连接检查。

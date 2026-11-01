@@ -1,4 +1,5 @@
-﻿---
+---
+noindex: true
 layout: layouts/post.njk
 title: macOS 版快连下载与权限配置
 description: Mac 安装快连客户端时的下载、拖入应用程序、首次打开、安全性允许和网络权限检查步骤。

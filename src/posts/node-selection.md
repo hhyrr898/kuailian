@@ -1,4 +1,5 @@
-﻿---
+---
+noindex: true
 layout: layouts/post.njk
 title: 快连下载节点选择入门
 description: 快连下载节点选择入门详细说明，涵盖快连下载后的配置步骤与注意事项。

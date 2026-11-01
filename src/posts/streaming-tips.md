@@ -1,4 +1,5 @@
-﻿---
+---
+noindex: true
 layout: layouts/post.njk
 title: 视频流媒体快连下载体验
 description: 视频流媒体快连下载体验详细说明，涵盖快连下载后的配置步骤与注意事项。

@@ -1,4 +1,5 @@
-﻿---
+---
+noindex: true
 layout: layouts/post.njk
 title: 办公网络快连下载部署建议
 description: 办公网络快连下载部署建议详细说明，涵盖快连下载后的配置步骤与注意事项。

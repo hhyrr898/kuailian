@@ -1,4 +1,5 @@
-﻿---
+---
+noindex: true
 layout: layouts/post.njk
 title: Windows 版快连下载安装全流程
 description: Windows 10/11 安装快连客户端前后的检查清单，包含安装包核对、权限弹窗、首次连接和常见失败处理。
