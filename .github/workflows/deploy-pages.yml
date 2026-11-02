@@ -1,4 +1,4 @@
-﻿name: Deploy to Cloudflare Pages
+name: Deploy to Cloudflare Pages
 
 on:
   push:
@@ -27,12 +27,13 @@ jobs:
 
       - name: Build Eleventy Site
         env:
-          SITE_URL: ${ '{' } vars.SITE_URL != '' && vars.SITE_URL || 'https://kuailian-letsv.com' { '}' }
+          SITE_URL: https://kuailalian.com
+          SITE_DOMAIN: https://kuailalian.com
         run: npm run build
 
       - name: Deploy to Cloudflare Pages
         uses: cloudflare/wrangler-action@v3
         with:
-          apiToken: ${ '{' } secrets.CLOUDFLARE_API_TOKEN { '}' }
-          accountId: ${ '{' } secrets.CLOUDFLARE_ACCOUNT_ID { '}' }
-          command: pages deploy _site --project-name=kuailian-letsv --commit-dirty=true
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          command: pages deploy _site --project-name=kuailian --commit-dirty=true
